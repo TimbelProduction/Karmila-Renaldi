@@ -1,0 +1,699 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Undangan — Karmila & Renaldi</title>
+
+<!-- Fonts: Script + Modern Sans -->
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500&family=Montserrat:wght@300;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lateef&display=swap" rel="stylesheet">
+
+<style>
+/* =========================
+   RESET & BASE
+========================= */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%; max-width:100%; overflow-x:hidden;} /* fix geser kanan */
+body{
+  font-family:"Montserrat",system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+  color:#222;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+/* =========================
+   BACKGROUND IMAGE + OVERLAY
+========================= */
+body::before{ 
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-3;
+  opacity: 0.30;
+  background:
+    linear-gradient(rgba(255,255,255,0.25), rgba(255,255,255,0.25)),
+    url(assets/golden-wedding-rings-white-rose-from-wedding-bouquet.jpg) center/cover no-repeat;
+  filter: saturate(1.05);
+  animation: bgShift 30s ease-in-out infinite;
+}
+@keyframes bgShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* =========================
+   CANVAS PARTICLES (glitter)
+========================= */
+canvas#particles { position:fixed; inset:0; z-index:-2; pointer-events:none; }
+
+/* =========================
+   ORNAMENT IMAGES
+========================= */
+.orn { position:fixed; width:140px; opacity:0.95; z-index:0; filter: drop-shadow(0 8px 20px rgba(0,0,0,0.08)); max-width:40%; height:auto; }
+.orn.tl { left:8px; top:18px;  width: 180px;}
+.orn.tr { right:8px; top:18px; transform: scaleX(-1); rotate: ; width: 180px;}
+.orn.bl { left:12px; bottom:10px; width: 120px;}
+.orn.br { right:12px; bottom:10px; transform: scale(-1,1); width: 120px;}
+.orn.cr {left: 800px; width: 350px; transform: rotate(-180deg);}
+.orn.lt {bottom: 100px; width: 400px; left: 1px; transform: rotate(30deg);}
+
+/* =========================
+   SLIDES (full-screen)
+========================= */
+.slide {
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center;
+  padding:28px;
+  text-align:center;
+  pointer-events:none;
+  opacity:0;
+  transform: translateY(12px) scale(0.995);
+  transition: opacity 520ms cubic-bezier(.2,.9,.25,1), transform 520ms cubic-bezier(.2,.9,.25,1);
+  z-index:1;
+}
+.slide.active{
+  opacity:1;
+  transform: translateY(0) scale(1);
+  pointer-events:auto;
+}
+
+.frame {
+  position: absolute; inset:18px;
+  border-radius:20px;
+  pointer-events:none;
+  border: 2px solid rgba(255,215,120,0.18);
+  box-shadow: 0 10px 40px rgba(11,12,14,0.06) inset;
+  z-index:0;
+}
+
+.card {
+  position: relative;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  overflow: hidden;
+  max-width:92%; /* biar ga kepenuhan layar kecil */
+  margin:auto;
+}
+
+/* Watermark bunga lembut */
+.card::before {
+  content: ""; 
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 160px;
+  height: 160px;
+  background: url(assets/pngegg\ \(6\).png) no-repeat center;
+  background-size: contain;
+  opacity: 0.15;
+  pointer-events: none;
+}
+
+/* =========================
+   TYPOGRAPHY
+========================= */
+.name {
+  font-family: "Dancing Script", cursive;
+  font-size: clamp(28px, 6.2vw, 68px); /* fleksibel */
+  letter-spacing:0.6px;
+  color: #cd574a;
+  line-height:1.2; /* biar ga kejepit di layar kecil */
+  margin-bottom:8px;
+  text-shadow: 0 6px 24px rgba(123,97,255,0.08);
+}
+.subtitle {
+  font-weight:600;
+  color:#3a2f3f;
+  font-size: clamp(14px, 1.8vw, 18px);
+  margin-bottom:14px;
+}
+.muted {
+  color:#6b6771;
+  font-size: clamp(12px,1.6vw,15px);
+}
+
+.big-cta {
+  margin-top:18px;
+  display:inline-flex;
+  gap:12px;
+  align-items:center;
+  justify-content:center;
+  padding:10px 20px;
+  border-radius:999px;
+  background: linear-gradient(135deg,#f8cdda,#f9a1bc, #e4a199);
+  color:white;
+  border: 1px solid rgb(220, 124, 140);
+  font-weight:700;
+  box-shadow: 0 10px 30px rgba(123,97,255,0.14);
+  pointer-events:auto;
+  cursor:pointer;
+  text-decoration: none;
+}
+.big-cta:active{ transform: scale(.98) }
+
+.section-title {
+  font-size: clamp(18px,3.2vw,30px);
+  color:#2b2540;
+  font-weight:700;
+  margin-bottom:10px;
+}
+
+.divider {
+  height:10px; width:120px; margin:12px auto; border-radius:8px;
+  background: linear-gradient(135deg,#f8cdda,#f9a1bc, #e4a199);
+  box-shadow: 0 8px 20px rgba(123,97,255,0.08);
+}
+
+.list { margin-top:12px; display:flex; flex-direction:column; gap:8px; align-items:center; }
+.pill {
+  background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.75));
+  padding:10px 16px;
+  border-radius:999px;
+  min-width: 200px;
+  max-width: 86%;
+  box-shadow: 0 6px 18px rgba(34,34,34,0.06);
+  transform-origin:center;
+  transition: transform 260ms ease, box-shadow 260ms ease;
+  font-weight:600;
+  color:#43354a;
+  font-size: clamp(13px,1.4vw,15px);
+}
+.pill:hover { transform: translateY(-6px) scale(1.02); box-shadow: 0 16px 40px rgba(34,34,34,0.12) }
+
+.love-badge {
+  display:inline-flex; gap:8px; align-items:center;
+  background:rgba(255,255,255,0.6); padding:8px 12px; border-radius:999px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.06); font-weight:700; color:#da6b5e;
+}
+ 
+/* =========================
+   TEXT ANIMATIONS
+========================= */
+.typing {
+  display:inline-block;
+  white-space:nowrap;
+  overflow:hidden;
+  border-right:3px solid rgba(74,43,107,0.9);
+  width:0;
+}
+
+/* =========================
+   HIASAN TAMBAHAN
+========================= */
+.frame {
+  border: 2px solid rgba(255,215,120,0.4);
+  box-shadow: 0 0 20px rgba(255,215,120,0.2), inset 0 0 20px rgba(255,215,120,0.1);
+}
+
+.orn.bgflower {
+  position: fixed;
+  bottom: -40px;
+  left: -20px;
+  width: 280px;
+  opacity: 0.25;
+  z-index: -1;
+  pointer-events: none;
+}
+.orn.bgflower2 {
+  position: fixed;
+  top: -30px;
+  right: -10px;
+  width: 220px;
+  opacity: 0.2;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.floating {
+  position: fixed;
+  bottom: -20px;
+  font-size: 22px;
+  animation: floatUp 8s linear infinite;
+  opacity: 0.6;
+  z-index: 0;
+  pointer-events: none;
+}
+.heart::before { content: "🌸"; }
+.star::before { content: "✨"; }
+
+@keyframes floatUp {
+  from { transform: translateY(0) scale(1); opacity: 0.6; }
+  to { transform: translateY(-120vh) scale(1.3); opacity: 0; }
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  width: 420px; height: 420px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,120,200,0.25), transparent 70%);
+  top: 20%; left: 10%;
+  z-index: -2;
+  filter: blur(60px);
+}
+
+@keyframes typing { to { width: 100%; } }
+.popIn { opacity:0; transform:translateY(10px) scale(.98); animation: popIn 420ms forwards; }
+@keyframes popIn { to { opacity:1; transform:translateY(0) scale(1); } }
+
+.slide-out { animation: slideOut 420ms forwards; }
+@keyframes slideOut { to { opacity:0; transform: translateY(-18px) scale(.98); filter: blur(2px); } }
+
+.fade-out { animation: fadeOut 420ms forwards; }
+@keyframes fadeOut { to { opacity:0; transform: scale(.98); filter: blur(1px); } }
+
+.confetti-c { position:fixed; inset:0; pointer-events:none; z-index:9999; }
+
+.music-btn { 
+  position:fixed; right:18px; top:18px; z-index:999;
+  width:48px; height:48px; border-radius:12px; border:0;
+  display:grid; place-items:center; cursor:pointer;
+  background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
+  box-shadow: 0 8px 26px rgba(4,6,12,0.12);
+}
+.music-btn span { font-size:18px }
+
+.bismillah-container {
+  text-align: center;
+  margin-bottom: 20px;
+  opacity: 0;
+}
+.fadeInSlow {
+  animation: fadeInBismillah 2.5s ease forwards;
+}
+@keyframes fadeInBismillah {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.bismillah { 
+  font-family: 'Lateef', serif;
+  font-size: clamp(18px, 2.4vw, 26px);
+  color: #da6b5e;
+  font-weight: 400;
+  margin: 8px 0;
+  opacity: 0;
+  animation: fadeInBismillah 1.6s ease forwards;
+  animation-delay: 1.4s;
+}
+.orn-line {
+  height: 2px;
+  width: 0%;
+  background: linear-gradient(to right, transparent, #FFD778, transparent);
+  margin: 6px auto;
+  border-radius: 2px;
+  animation: lineExpand 1.8s ease forwards;
+}
+
+.hiasan-atas {
+  position: absolute; 
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%) rotate(180deg); /* diputer 180° */
+  width: 230px; /* gedein dikit */
+  z-index: 2;
+  pointer-events: none;
+}
+
+.hiasan-atas1 {
+    position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%); /* diputer 180° */
+  width: 230px; /* gedein dikit */
+  z-index: 2;
+  width: 100px;
+  pointer-events: none;
+}
+
+.hiasan-atas img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.orn.extra1 {
+  top: 30%;
+  left: -40px;
+  width: 160px;
+  opacity: 0.18;
+  transform: rotate(-20deg);
+}
+.orn.extra2 {
+  bottom: 25%;
+  right: -50px;
+  width: 180px;
+  opacity: 0.22;
+  transform: rotate(25deg);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hiasan-atas {
+    width: 180px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hiasan-atas {
+    width: 150px;
+  }
+}
+
+@keyframes lineExpand {
+  from { width: 0%; opacity: 0; }
+  to { width: 60%; opacity: 1; }
+}
+
+/* =========================
+   MEDIA QUERY (RESPONSIVE)
+========================= */
+@media (max-width:720px){
+  .orn{ width:96px }
+  .card{ padding:18px; max-width:95%; }
+  .pill { min-width:180px; font-size:13px }
+  .orn.cr {left: 110px; width: 150px; transform: rotate(-180deg);}
+  .orn.tl {left:auto; right:0; top:0; transform: scaleX(-1); width: 90px;}
+  .orn.tr { right:auto; left:0; top:0; transform: rotate(-15deg); width: 90px;}
+}
+</style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+<div id="sparkles" aria-hidden="true"></div>
+
+<img class="orn tr" src="assets/pngegg.png" alt="ornament tr">
+<img class="orn tl" src="assets/pngegg.png" alt="ornament tl">
+<img class="orn bl" src="assets/pngegg (1).png" alt="ornament bl">
+<img class="orn br" src="assets/pngegg (1).png" alt="ornament br">
+<div class="hiasan-atas">
+  <img src="assets/pngegg (3).png" alt="hiasan bunga atas">
+</div>
+
+<img class="orn extra1" src="assets/pngegg.png" alt="ornament-extra">
+<img class="orn extra2" src="assets/png22-removebg-preview.png" alt="ornament-extra">
+
+
+<!-- Floating hearts & stars -->
+<div class="floating heart" style="left:15%; animation-delay:0s"></div>
+<div class="floating star" style="left:35%; animation-delay:2s"></div>
+<div class="floating heart" style="left:55%; animation-delay:4s"></div>
+<div class="floating star" style="left:75%; animation-delay:6s"></div>
+
+<div class="frame" aria-hidden="true"></div>
+
+<button class="music-btn" id="musicBtn" title="Play / Pause Music"><span id="musicIcon">▶️</span></button>
+
+<main id="slidesRoot" style="position:relative;height:100vh;">
+  
+<!-- slide 0: cover -->
+<section class="slide active" data-index="0">
+  <div class="card">
+    
+    <!-- Bismillah dengan ornamen -->
+    <div class="bismillah-container fadeInSlow">
+      <div class="orn-line"></div>
+      <div class="bismillah">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</div>
+      <div class="orn-line"></div>
+    </div>
+
+    <div class="name"><span id="typeName" class="typing">Karmila &amp; Renaldi</span></div>
+    <div class="subtitle popIn" style="animation-delay:700ms">Sabtu, 11 Oktober 2025 • 10.00 WIB</div>
+    <div style="height:12px"></div>
+    <div class="love-badge popIn" style="animation-delay:1000ms"><span style="font-size:18px">💌</span> Kepada Yth. Tamu Undangan </div>
+    <div style="height:16px"></div>
+</section>
+
+  <!-- slide pasangan -->
+  <section class="slide" data-index="1">
+    <div class="card">
+      <div class="section-title popIn">Pasangan</div>
+      <div class="divider"></div>
+      <div style="height:12px"></div>
+      <div class="subtitle popIn" style="animation-delay:150ms">KARMILA ARDIANTI</div>
+      <div class="muted popIn" style="animation-delay:400ms">Putri pertama Bpk. Agus Suhendar & Ibu Euis Patonah</div>
+      <div style="height:18px"></div>
+      <div class="subtitle popIn" style="animation-delay:800ms">MUHAMMAD RENALDI</div>
+      <div class="muted popIn" style="animation-delay:1100ms">Putra kedua Bpk. Herman & Ibu Yanah</div>
+    </div>
+  </section>
+
+  <!-- quotes romantis -->
+  <section class="slide" data-index="2">
+    <div class="card">
+      <blockquote style="font-style:italic; font-size:18px; color:#da6b5e; line-height:1.5">
+        "Cinta sejati adalah ketika dua jiwa saling melengkapi dan berjalan bersama menuju satu tujuan."
+      </blockquote>
+    </div>
+  </section>
+
+  <!-- slide turut mengundang -->
+  <section class="slide" data-index="3">
+    <div class="card">
+      <div class="section-title popIn">Turut Mengundang</div>
+      <div class="divider"></div>
+      <div class="list" id="guestList">
+        <div class="pill">Cunayah, Ribqi (Sepupu)</div>
+        <div class="pill">Utri, Salsa, Jeany, Vira, Viona, Bagas, Abi, Anis, Aulia, Manda — Best Friend</div>
+        <div class="pill">Alumni SDN Babakan 01 Pasar Jengkol</div>
+        <div class="pill">Alumni SMP Bakti Nusantara Buaran Kodiklat</div>
+        <div class="pill">Alumni SMKN 3 Kota Tangerang Selatan</div>
+        <div class="pill">Kel. Besar Cgv Paradise Walk Serpong</div>
+        <div class="pill">Pemuda/i Bakti Jaya</div>
+        <div class="pill">Pemuda/i Gg. Sukun</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- countdown -->
+  <section class="slide" data-index="4">
+    <div class="card">
+      <div class="section-title">Hitung Mundur</div>
+      <div class="divider"></div>
+      <div id="countdown" style="font-size:26px; font-weight:700; margin-top:18px; color:#cd6a5f"></div>
+    </div>
+    
+  </section>
+
+  <!-- slide acara -->
+  <section class="slide" data-index="5">
+    <div class="card">
+      <div class="section-title popIn">Acara</div>
+      <div class="divider"></div>
+      <div style="height:12px"></div>
+      <div class="subtitle popIn" style="animation-delay:180ms">Sabtu, 11 Oktober 2025</div>
+      <div class="muted popIn" style="animation-delay:380ms">Pukul 10.00 WIB s.d Selesai</div>
+      <div style="height:12px"></div>
+      <div class="muted popIn" style="animation-delay:580ms">Jl. AMD Babakan Pocis RT. 04 RW. 02, Kel. Bakti Jaya, Kec. Setu — Kota Tangerang Selatan</div>
+      <div style="height:18px"></div>
+      <a class="big-cta popIn" style="animation-delay:900ms" href="https://maps.app.goo.gl/1iB8XCVMfUBiqJXX7" target="_blank" rel="noopener">Buka Lokasi</a>
+    </div>
+  </section>
+
+  <!-- slide penutup -->
+  <section class="slide" data-index="6">
+    <div class="card">
+      <div class="name popIn" style="animation-delay:130ms">Terima Kasih</div>
+      <div style="height:12px"></div>
+      <div class="muted popIn" style="animation-delay:450ms">Kehadiran & doa restu Anda adalah kebahagiaan bagi kami</div>
+      <div style="height:18px"></div>
+      <div class="love-badge popIn" style="animation-delay:800ms"><span style="font-size:20px">💍</span> Sampai jumpa!</div>
+    </div>
+  </section>
+</main>
+
+<div class="confetti-c" id="confettiRoot" aria-hidden="true"></div>
+
+<audio id="bgAudio" preload="auto" loop muted>
+  <source src="assets/Tiara Andini, Arsy Widianto - Lagu Pernikahan Kita (Official Music Video) (mp3cut.net) (1).mp3" type="audio/mpeg">
+</audio>
+
+<script>
+(function(){ 
+const SLIDE_DURATION=4000, EXIT_ANIM_MS=420;
+const slides=Array.from(document.querySelectorAll(".slide"));
+let idx=0, autoTimer=null;
+// === MUSIK ===
+const bgAudio = document.getElementById("bgAudio");
+const musicBtn = document.getElementById("musicBtn");
+const musicIcon = document.getElementById("musicIcon");
+let musicPlaying = false;
+
+musicBtn.addEventListener("click", () => {
+  if (musicPlaying) {
+    bgAudio.pause();
+    musicPlaying = false;
+    musicIcon.textContent = "▶️";
+  } else {
+    bgAudio.muted = false; // unmute di klik pertama
+    bgAudio.play().catch(err => console.log("gagal play:", err));
+    musicPlaying = true;
+    musicIcon.textContent = "⏸️";
+  }
+});
+
+const typeName=document.getElementById("typeName");
+function runTyping(){
+  typeName.style.width="0ch";
+  void typeName.offsetWidth;
+  const textLength=typeName.textContent.length;
+  const time=Math.min(2800,160*textLength+400);
+  typeName.style.animation=`typing ${time}ms steps(${Math.max(10,textLength)}, end) forwards`;
+}
+
+runTyping();
+
+function showSlide(i){
+  slides.forEach((s,si)=>{
+    if(si===i){
+      s.classList.add("active");
+      s.querySelectorAll(".popIn, .pill, .typing").forEach(el=>{
+        el.style.animation='none';
+        void el.offsetHeight;
+        if(el.classList.contains('typing')){ runTyping(); }
+        else { el.style.animation=`popIn 420ms forwards`; }
+      });
+      const pills=s.querySelectorAll(".pill");
+      pills.forEach((p,pi)=>{
+        p.style.opacity=0;
+        p.style.transform='translateY(10px)';
+        p.style.transition='opacity 350ms ease, transform 350ms ease';
+        setTimeout(()=>{ p.style.opacity=1; p.style.transform='translateY(0)'; }, 220+(pi*120));
+      });
+    } else { s.classList.remove("active"); }
+  });
+}
+
+function goNext(){
+  const cur=slides[idx];
+  cur.classList.remove("active");
+  cur.querySelectorAll(".card, .popIn, .pill, .typing").forEach(el=>{
+    el.classList.add('fade-out');
+    setTimeout(()=>{ el.classList.remove('fade-out'); }, EXIT_ANIM_MS+20);
+  });
+  idx=(idx+1)%slides.length;
+  setTimeout(()=>{ showSlide(idx); }, EXIT_ANIM_MS);
+}
+
+function startAuto(){ if(autoTimer) clearInterval(autoTimer); autoTimer=setInterval(goNext, SLIDE_DURATION+EXIT_ANIM_MS+200); }
+startAuto();
+showSlide(idx);
+document.addEventListener("visibilitychange", ()=>{ if(document.hidden){ clearInterval(autoTimer); autoTimer=null; } else { startAuto(); } });
+
+const confettiRoot=document.getElementById("confettiRoot");
+let lastConfettiTime=0;
+function maybeConfetti(i){
+  if(i===slides.length-1){
+    const now=Date.now();
+    if(now-lastConfettiTime>6000){ lastConfettiTime=now; launchConfetti(); }
+  }
+}
+const originalShow=showSlide;
+window.showSlide=function(i){ originalShow(i); maybeConfetti(i); };
+window.nextSlide=goNext;
+
+function launchConfetti(){
+  const colors=['#ff77a9','#ffd166','#7be495','#7b61ff','#4dd0e1'];
+  const count=26;
+  for(let i=0;i<count;i++){
+    const el=document.createElement('div');
+    el.className='confetti';
+    const size=Math.random()*10+8;
+    el.style.width=`${size}px`; el.style.height=`${size*0.6}px`;
+    el.style.left=(Math.random()*90+5)+'vw';
+    el.style.top='-8vh';
+    el.style.position='fixed';
+    el.style.zIndex=9999;   
+    el.style.background=colors[Math.floor(Math.random()*colors.length)];
+    el.style.opacity=0.95;
+    el.style.borderRadius=(Math.random()>0.5? '6px':'50%');
+    const dur=2200+Math.random()*1400;
+    el.style.transition=`transform ${dur}ms cubic-bezier(.2,.9,.2,1), top ${dur}ms linear, opacity ${dur}ms linear`;
+    document.body.appendChild(el);
+    setTimeout(()=>{
+      const rot=(Math.random()*720-360);  
+      el.style.transform=`translateY(${120+Math.random()*60}vh) rotate(${rot}deg)`;
+      el.style.top='100vh';
+      el.style.opacity=0.92; 
+    },20);
+    setTimeout(()=>{ el.remove(); }, dur+50);  
+  }
+}
+
+const obs=new MutationObserver((muts)=>{     
+  muts.forEach(m=>{
+    if(m.attributeName==='class'){
+      const target=m.target;
+      if(target.classList.contains('slide') && target.classList.contains('active')){
+        const i=Number(target.getAttribute('data-index'));
+        maybeConfetti(i);
+      }
+    }
+  });
+});
+slides.forEach(s=>obs.observe(s,{attributes:true}));
+
+/* PARTICLES (canvas glitter) */
+const canvas=document.getElementById('particles');
+const ctx=canvas.getContext('2d');
+let W=innerWidth,H=innerHeight;
+function resize(){ W=canvas.width=innerWidth; H=canvas.height=innerHeight; }
+addEventListener('resize', resize); resize();
+const particles=[];
+const PCOUNT=Math.round((W*H)/90000);
+for(let i=0;i<Math.max(30,PCOUNT);i++){
+  particles.push({x:Math.random()*W, y:Math.random()*H, r:Math.random()*2.2+0.6, vx:(Math.random()-0.5)*0.15, vy:(Math.random()-0.5)*0.15, alpha:Math.random()*0.7+0.15});
+}
+function drawParticles(){
+  ctx.clearRect(0,0,W,H);
+  particles.forEach(p=>{
+    ctx.beginPath();
+    const g=ctx.createRadialGradient(p.x,p.y,p.r*0.1,p.x,p.y,p.r*3);
+    g.addColorStop(0,`rgba(255,255,255,${p.alpha})`);
+    g.addColorStop(1,'rgba(255,255,255,0)');
+    ctx.fillStyle=g;
+    ctx.arc(p.x,p.y,p.r*3,0,Math.PI*2);
+    ctx.fill();
+    p.x+=p.vx; p.y+=p.vy;
+    if(p.x<-10)p.x=W+10;if(p.x>W+10)p.x=-10;
+    if(p.y<-10)p.y=H+10;if(p.y>H+10)p.y=-10;
+  });
+  requestAnimationFrame(drawParticles);
+}
+drawParticles();
+
+/* COUNTDOWN */
+const countdownEl = document.getElementById("countdown");
+const targetDate = new Date("October 11, 2025 10:00:00 GMT+0700"); // WIB
+
+function updateCountdown() {
+  const now = new Date().getTime();
+  const distance = targetDate - now;
+
+  if (distance <= 0) {
+    countdownEl.innerHTML = "Acara sedang berlangsung 🎉";
+    clearInterval(timer);
+    return;
+  }
+
+  const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+  countdownEl.innerHTML = 
+    `${days} Hari : ${hours} Jam : ${minutes} Menit : ${seconds} Detik`;
+}
+
+
+const timer = setInterval(updateCountdown, 1000);
+updateCountdown();
+
+})();
+</script>
+</body>
+</html>
